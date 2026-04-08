@@ -337,7 +337,9 @@ button.answerPulse{
   display:flex;
   align-items:flex-start;
   justify-content:center;
-  padding: calc(var(--modal-top-offset) + env(safe-area-inset-top)) 12px 12px;
+  padding-top: 100px;
+  padding-left:10px;
+  padding-right: 10px;
   z-index:50;
 }
 .modal.hidden{display:none}

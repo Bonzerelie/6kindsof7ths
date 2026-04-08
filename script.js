@@ -125,11 +125,12 @@
   function showInfo() { openModal(infoModal); }
   function hideInfo() { closeModal(infoModal); }
 
-   // ---------------- iframe sizing & scroll forwarding ----------------
+  // ---------------- iframe sizing & scroll forwarding ----------------
   let lastHeight = 0;
-  const ro = new ResizeObserver((entries) => {
+  const ro = new ResizeObserver(entries => {
     for (const entry of entries) {
-      const height = Math.ceil(entry.contentRect.height);
+      // +50px buffer added here
+      const height = Math.ceil(entry.contentRect.height) + 50; 
       if (height !== lastHeight) {
         parent.postMessage({ iframeHeight: height }, "*");
         lastHeight = height;
@@ -144,6 +145,7 @@
         document.documentElement.scrollHeight,
         document.body ? document.body.scrollHeight : 0
       );
+      // +50px buffer added here
       parent.postMessage({ iframeHeight: h + 50 }, "*");
     } catch {}
   }
@@ -158,6 +160,12 @@
     setTimeout(postHeightNow, 100);
     setTimeout(postHeightNow, 500);
   });
+
+  // This is left empty ("return;") so the browser handles scrolling natively, 
+  // which allows scrolling on mobile while modals are open.
+  function enableScrollForwardingToParent() {
+    return;
+  }
 
   infoBtn?.addEventListener("click", () => { playUiSound(UI_SND_SELECT); showInfo(); });
   infoClose?.addEventListener("click", () => { playUiSound(UI_SND_BACK); hideInfo(); });

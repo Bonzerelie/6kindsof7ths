@@ -125,6 +125,40 @@
   function showInfo() { openModal(infoModal); }
   function hideInfo() { closeModal(infoModal); }
 
+   // ---------------- iframe sizing & scroll forwarding ----------------
+  let lastHeight = 0;
+  const ro = new ResizeObserver((entries) => {
+    for (const entry of entries) {
+      const height = Math.ceil(entry.contentRect.height);
+      if (height !== lastHeight) {
+        parent.postMessage({ iframeHeight: height }, "*");
+        lastHeight = height;
+      }
+    }
+  });
+  ro.observe(document.documentElement);
+
+  function postHeightNow() {
+    try {
+      const h = Math.max(
+        document.documentElement.scrollHeight,
+        document.body ? document.body.scrollHeight : 0
+      );
+      parent.postMessage({ iframeHeight: h }, "*");
+    } catch {}
+  }
+
+  window.addEventListener("load", () => {
+    postHeightNow();
+    setTimeout(postHeightNow, 250);
+    setTimeout(postHeightNow, 1000);
+  });
+
+  window.addEventListener("orientationchange", () => {
+    setTimeout(postHeightNow, 100);
+    setTimeout(postHeightNow, 500);
+  });
+
   infoBtn?.addEventListener("click", () => { playUiSound(UI_SND_SELECT); showInfo(); });
   infoClose?.addEventListener("click", () => { playUiSound(UI_SND_BACK); hideInfo(); });
   infoOk?.addEventListener("click", () => { playUiSound(UI_SND_BACK); hideInfo(); });

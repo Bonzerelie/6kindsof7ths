@@ -144,7 +144,7 @@
         document.documentElement.scrollHeight,
         document.body ? document.body.scrollHeight : 0
       );
-      parent.postMessage({ iframeHeight: h }, "*");
+      parent.postMessage({ iframeHeight: h + 50 }, "*");
     } catch {}
   }
 

@@ -173,31 +173,6 @@
     });
   });
 
-   function init() {
-    enableScrollForwardingToParent();
-
-    document.documentElement.style.setProperty("--pulseColor", PRESELECT_COLOR_DEFAULT);
-    document.documentElement.style.setProperty("--pulseRGBA", hexToRgba(PRESELECT_COLOR_DEFAULT, 0.28));
-
-    initTitleImageSwap();
-
-    mainKeyboard.render(KEYBOARD_PRESET_1OCT_C4, PRESELECT_COLOR_DEFAULT);
-
-    renderScore();
-    setTrackPlaying(false);
-    updateControls();
-
-    if (instructions) instructions.classList.add("hidden");
-    setResult("Press <strong>Start Game</strong> to begin.");
-    setHint("");
-
-    openStartModal();
-  }
-
-  bind();
-  init();
-})();
-
   // ---------------- UI Building ----------------
   function hexToRgba(hex, alpha) {
     const r = parseInt(hex.slice(1, 3), 16);

@@ -229,6 +229,18 @@
     });
   }
 
+  // Calculates a linear gain multiplier by reducing a set amount of dB per extra voice
+function getDynamicGain(numVoices, dbReductionPerExtraVoice = 2.5) {
+  if (numVoices <= 1) return 1.0; // Full volume for a single note
+  
+  // Calculate the total decibel reduction
+  // (e.g., 4 notes = 3 extra voices. 3 * 2.5dB = -7.5dB total reduction)
+  const totalDbReduction = dbReductionPerExtraVoice * (numVoices - 1);
+  
+  // Convert the decibel reduction into a linear gain scale (0.0 to 1.0)
+  return Math.pow(10, -totalDbReduction / 20);
+}
+
   function updateActiveChordsFromToggles() {
     activeChordKeys = Array.from(chordToggles)
       .filter(cb => cb.checked)
@@ -446,7 +458,10 @@
     const bufs = results.map((r) => r?.buffer).filter(Boolean);
     if (!bufs.length) return false;
 
-    const perNoteGain = 0.70; 
+    // Apply a 3dB reduction for every additional note played simultaneously 
+    // to prevent the combined audio from clipping.
+    const perNoteGain = getDynamicGain(bufs.length, 1.5); 
+
     for (let i = 0; i < bufs.length; i++) {
       playBufferWindowed(bufs[i], whenSec, playSec, fadeOutSec, perNoteGain);
     }
